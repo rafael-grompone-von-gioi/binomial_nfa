@@ -89,15 +89,52 @@ static int double_equal(double a, double b)
 }
 
 /*----------------------------------------------------------------------------*/
-/* computes the logarithm of binomial NFA to base 10.
-
-   NFA = NT.b(n,k,p)
-   the return value is log10(NFA)
-
-   n,k,p - binomial parameters.
-   logNT - logarithm of Number of Tests
+/** Size of the table to store already computed inverse values.
  */
 #define TABSIZE 100000
+
+/*----------------------------------------------------------------------------*/
+/** Computes log10(NFA).
+
+    NFA stands for Number of False Alarms:
+    @f[
+        \mathrm{NFA} = NT \cdot B(n,k,p)
+    @f]
+
+    - NT       - number of tests
+    - B(n,k,p) - tail of binomial distribution with parameters n,k and p:
+    @f[
+        B(n,k,p) = \sum_{j=k}^n
+                   \left(\begin{array}{c}n\\j\end{array}\right)
+                   p^{j} (1-p)^{n-j}
+    @f]
+
+    The value log10(NFA) is equivalent but more intuitive than NFA:
+    -   1 corresponds to 10 mean false alarms
+    -  -0 corresponds to 1 mean false alarm
+    -  -1 corresponds to 0.1 mean false alarms
+    -  -2 corresponds to 0.01 mean false alarms
+    -  ...
+
+    Used this way, the smaller the value, better the detection,
+    and a logarithmic scale is used.
+
+    @param n,k,p binomial parameters.
+    @param logNT logarithm of Number of Tests
+
+    The computation is based in the gamma function by the following
+    relation:
+    @f[
+        \left(\begin{array}{c}n\\k\end{array}\right)
+        = \frac{ \Gamma(n+1) }{ \Gamma(k+1) \cdot \Gamma(n-k+1) }.
+    @f]
+    We use efficient algorithms to compute the logarithm of
+    the gamma function.
+
+    To make the computation faster, not all the sum is computed, part
+    of the terms are neglected based on a bound to the error obtained
+    (an error of 10% in the result is accepted).
+ */
 double log_binomial_nfa(int n, int k, double p, double logNT)
 {
   static double inv[TABSIZE];   /* table to keep computed inverse values */

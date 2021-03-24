@@ -180,14 +180,14 @@ static double log_gamma_windschitl(double x)
                    p^{j} (1-p)^{n-j}
     @f]
 
-    The value -log10(NFA) is equivalent but more intuitive than NFA:
-    - -1 corresponds to 10 mean false alarms
-    -  0 corresponds to 1 mean false alarm
-    -  1 corresponds to 0.1 mean false alarms
-    -  2 corresponds to 0.01 mean false alarms
+    The value log10(NFA) is equivalent but more intuitive than NFA:
+    -   1 corresponds to 10 mean false alarms
+    -  -0 corresponds to 1 mean false alarm
+    -  -1 corresponds to 0.1 mean false alarms
+    -  -2 corresponds to 0.01 mean false alarms
     -  ...
 
-    Used this way, the bigger the value, better the detection,
+    Used this way, the smaller the value, better the detection,
     and a logarithmic scale is used.
 
     @param n,k,p binomial parameters.
